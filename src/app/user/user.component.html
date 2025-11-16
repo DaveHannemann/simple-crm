@@ -1,0 +1,27 @@
+<mat-card>
+  <mat-card-content>
+    <table class="user-table">
+      <tr>
+        <th>Name</th>
+        <th>Birth Date</th>
+        <th>City</th>
+      </tr>
+      <tr *ngFor="let user of users$ | async">
+        <td>{{ user.firstName }} {{ user.lastName }}</td>
+        <td>{{ user.birthDate ? (user.birthDate | date:'dd.MM.yyyy') : '' }}</td>
+        <td>{{ user.city }}</td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>
+
+<button
+  (click)="openDialog()"
+  class="add-user-btn"
+  mat-fab
+  color="primary"
+  matTooltip="Add a new user"
+  [matTooltipPosition]="position.value!"
+>
+  <mat-icon>add</mat-icon>
+</button>
