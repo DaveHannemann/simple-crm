@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-user',
@@ -22,7 +23,8 @@ import { Observable } from 'rxjs';
     MatFormFieldModule,
     MatCardModule,
     CommonModule,
-  ],
+    RouterLink
+],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
 })
@@ -46,6 +48,11 @@ export class UserComponent {
     this.users$ = collectionData(usersRef, { idField: 'id' }) as Observable<
       User[]
     >;
+
+    this.users$.subscribe((users) => {
+      console.log(users);
+      console.log(users[0].id);
+    });
   }
 
   openDialog() {
