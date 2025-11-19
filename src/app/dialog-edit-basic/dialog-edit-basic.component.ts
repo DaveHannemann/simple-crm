@@ -39,6 +39,7 @@ import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
 export class DialogEditBasicComponent {
   user!: User;
   loading = false;
+  birthDate: Date | null = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { user$: Observable<User> },
@@ -47,6 +48,7 @@ export class DialogEditBasicComponent {
   ) {
     this.data.user$.subscribe((user) => {
       this.user = new User(user);
+      this.birthDate = user.birthDate ? new Date(user.birthDate) : null;
     });
   }
 
@@ -55,10 +57,13 @@ export class DialogEditBasicComponent {
 
     const userDocRef = doc(this.firestore, `users/${this.user.id}`);
 
+    const birthTimestamp = this.birthDate ? this.birthDate.getTime() : null;
+
     await updateDoc(userDocRef, {
       firstName: this.user.firstName,
       lastName: this.user.lastName,
       email: this.user.email,
+      birthDate: birthTimestamp,
     });
 
     this.loading = false;

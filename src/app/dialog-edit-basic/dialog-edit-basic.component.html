@@ -35,6 +35,24 @@
       <!-- <mat-hint>Please enter an e-mail</mat-hint> -->
     </mat-form-field>
   </div>
+    <div>
+    <mat-form-field class="full-width" appearance="outline">
+      <mat-label>Birth Date</mat-label>
+      <input
+        [(ngModel)]="birthDate"
+        matInput
+        placeholder="Birth Date"
+        [matDatepicker]="picker"
+        [disabled]="loading"
+      />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <!-- <mat-hint>Please pick a date</mat-hint> -->
+    </mat-form-field>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions class="action-box">
   <button [disabled]="loading" mat-button (click)="dialogRef.close()">Cancel</button>
