@@ -10,13 +10,16 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 import { User } from '../../models/user.class';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Inject } from '@angular/core';
+import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
 
 @Component({
-  selector: 'app-dialog-add-user',
+  selector: 'app-dialog-edit-address',
   standalone: true,
   imports: [
     MatFormFieldModule,
@@ -30,33 +33,35 @@ import { CommonModule } from '@angular/common';
     MatProgressBarModule,
     CommonModule,
   ],
-  templateUrl: './dialog-add-user.component.html',
-  styleUrl: './dialog-add-user.component.scss',
+  templateUrl: './dialog-edit-address.component.html',
+  styleUrl: './dialog-edit-address.component.scss',
 })
-export class DialogAddUserComponent {
-  loading: boolean = false;
-  user = new User();
-  birthDate: Date | null = null;
+export class DialogEditAddressComponent {
+  user!: User;
+  loading = false;
+
   constructor(
-    public dialogRef: MatDialogRef<DialogAddUserComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { user$: Observable<User> },
+    public dialogRef: MatDialogRef<DialogEditAddressComponent>,
     private firestore: Firestore
-  ) {}
+  ) {
+    this.data.user$.subscribe((user) => {
+      this.user = new User(user);
+    });
+  }
 
   async save() {
-    if (this.birthDate) {
-      this.user.birthDate = this.birthDate.getTime();
-    }
-    console.log('User saved:', this.user);
     this.loading = true;
 
-    const usersRef = collection(this.firestore, 'users');
+    const userDocRef = doc(this.firestore, `users/${this.user.id}`);
 
-    await addDoc(usersRef, this.user.toJSON())
-      .then(() => {
-        this.loading = false;
-        console.log('User added to Firestore');
-        this.dialogRef.close();
-      })
-      .catch((err) => console.error('Error adding user:', err));
+    await updateDoc(userDocRef, {
+      street: this.user.street,
+      zipCode: this.user.zipCode,
+      city: this.user.city,
+    });
+
+    this.loading = false;
+    this.dialogRef.close();
   }
 }
